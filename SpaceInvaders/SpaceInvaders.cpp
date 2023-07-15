@@ -1,9 +1,114 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <iostream>
+
+
+class Object {
+public:
+
+    sf::Vector2f position;
+    bool hidden;
+    bool collision;
+    bool controllable;
+
+    float collisionBox[4];
+
+    sf::Texture texture;
+    sf::Sprite sprite;
+
+    void setTexture(sf::Texture* playerTexture) {
+        sprite = sf::Sprite(*playerTexture);
+    }
+
+    void render(sf::RenderWindow* window) {
+        window->draw(sprite);
+    }
+
+    void move(sf::Vector2f objPosition) {
+        sprite.setPosition(objPosition);
+    }
+
+    bool checkCollision(Projectile* projectile) {
+        if (collisionBox[0] > *projectile->collisionBox) {
+            return true;
+        }
+        return false;
+    }
+
+};
+
+class Projectile : Object {
+public:
+    Projectile() {
+        hidden = false;
+        collision = true;
+        controllable = false;
+    }
+};
+
+class Player : public Object {
+public:
+    Player() {
+        hidden = false;
+        collision = true;
+        controllable = true;
+    }
+
+    void controll();
+
+    void shoot();
+
+};
+
+class Enemy : public Object {
+public:
+    Enemy() {
+        hidden = false;
+        collision = true;
+        controllable = false;
+    }
+};
+
 
 int main(){
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
+    sf::RenderWindow window(sf::VideoMode(256, 256), "Space Invaders");
+    sf::CircleShape shape(1000.f);
+    shape.move(-500.f, -500.f);
     shape.setFillColor(sf::Color::Green);
+
+    sf::Image playerImage;
+    playerImage.loadFromFile("./assets/sprites/player.png");
+    sf::Texture playerTexture;
+    playerTexture.loadFromImage(playerImage);
+
+    sf::Image enemyImage;
+    enemyImage.loadFromFile("./assets/sprites/enemy1.png");
+    sf::Texture enemyTexture;
+    enemyTexture.loadFromImage(enemyImage);
+
+
+    Player player;
+
+    player.setTexture(&playerTexture);
+
+    player.move(sf::Vector2f(16, 15*16));
+
+
+    std::vector<Enemy>enemies;
+
+    for (int x = 1; x <= 7; x++) {
+        for (int y = 1; y <= 4; y++) {
+            enemies.emplace_back();
+            enemies[enemies.size() - 1].setTexture(&enemyTexture);
+            enemies[enemies.size() - 1].move(sf::Vector2f(32 * x - 16, 32 * y - 16));
+        }
+    }
+
+
+    Projectile bullet;
+
+
+
 
     while (window.isOpen()){
         sf::Event event;
@@ -14,6 +119,12 @@ int main(){
 
         window.clear();
         window.draw(shape);
+
+
+        player.render(&window);
+
+        for (int i = 0; i < enemies.size(); i++)enemies[i].render(&window);
+
         window.display();
     }
 
