@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
 #include <vector>
 #include <iostream>
 
@@ -25,15 +26,16 @@ public:
     }
 
     void move(sf::Vector2f objPosition) {
-        sprite.setPosition(objPosition);
+        sprite.setPosition(position + objPosition);
+        position = sprite.getPosition();
     }
-
+    /*
     bool checkCollision(Projectile* projectile) {
         if (collisionBox[0] > *projectile->collisionBox) {
             return true;
         }
         return false;
-    }
+    }*/
 
 };
 
@@ -47,6 +49,9 @@ public:
 };
 
 class Player : public Object {
+private:
+    float movementSpeed = 100.f;
+
 public:
     Player() {
         hidden = false;
@@ -54,7 +59,14 @@ public:
         controllable = true;
     }
 
-    void controll();
+    void controll(float delta) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            move(sf::Vector2f(-1 * movementSpeed * delta, 0));
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            move(sf::Vector2f(1 * movementSpeed * delta, 0));
+        }
+    }
 
     void shoot();
 
@@ -91,7 +103,7 @@ int main(){
 
     player.setTexture(&playerTexture);
 
-    player.move(sf::Vector2f(16, 15*16));
+    player.position = sf::Vector2f(16, 15 * 16);
 
 
     std::vector<Enemy>enemies;
@@ -109,13 +121,25 @@ int main(){
 
 
 
-
+    sf::Clock clock;
+    sf::Time delta;
     while (window.isOpen()){
         sf::Event event;
         while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed)
                 window.close();
         }
+
+        delta = clock.getElapsedTime();
+        
+        if (delta.asMilliseconds() > 0) {
+            clock.restart();
+            player.controll(delta.asMilliseconds() / 1000.f);
+
+            //std::cout << delta.asMilliseconds() / 1000.f << " " << player.position.x << "\n";
+        }
+
+        
 
         window.clear();
         window.draw(shape);
