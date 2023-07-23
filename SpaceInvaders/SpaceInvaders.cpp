@@ -45,7 +45,7 @@ public:
     }
 
     void render(sf::RenderWindow* window) {
-        if(!hidden)window->draw(sprite);
+        if(!hidden) window->draw(sprite);
     }
 
     void move(sf::Vector2f objPosition) {
@@ -134,24 +134,39 @@ int main(){
     bulletTexture.loadFromImage(bulletImage);
 
 
+    std::vector<Object*>objects;
+
+
     Player player;
+    objects.push_back(&player);
     player.autoCollision(playerImage);
 
     player.setTexture(&playerTexture);
     player.move(sf::Vector2f(16, 15 * 16));
     //player.position = ;
 
-
-    std::vector<Enemy>enemies;
+    const int sizeX = 7;
+    const int sizeY = 4;
+    std::vector<Enemy> enemies(sizeX * sizeY);
+    for (int i = 0; i < enemies.size(); i++) {
+        auto& enemy = enemies[i];
+        int x = 1 + i % sizeX;
+        int y = i / sizeX;
+        enemy.setTexture(&enemyTexture);
+        enemy.autoCollision(enemyImage);
+        enemy.move(sf::Vector2f(32 * x - 16, 32 * y - 16));
+        objects.push_back(&enemy);
+            // enemies[enemies.size() - 1].setTexture(&enemyTexture);
+            // enemies[enemies.size() - 1].autoCollision(enemyImage);
+            // enemies[enemies.size() - 1].move(sf::Vector2f(32 * x - 16, 32 * y - 16)); 
+    }
 
     for (int x = 1; x <= 7; x++) {
         for (int y = 1; y <= 4; y++) {
-            enemies.emplace_back();
-            enemies[enemies.size() - 1].setTexture(&enemyTexture);
-            enemies[enemies.size() - 1].autoCollision(enemyImage);
-            enemies[enemies.size() - 1].move(sf::Vector2f(32 * x - 16, 32 * y - 16));
         }
     }
+
+
 
     std::vector<Projectile>projectiles;
 
@@ -190,18 +205,23 @@ int main(){
 
         
         for (int i = 0; i < enemies.size(); i++) {
-            if (enemies[i].checkCollision(mouse, tColBox))enemies.erase(enemies.begin() + i);
+            if (enemies[i].checkCollision(mouse, tColBox)) 
+                enemies.erase(enemies.begin() + i);
+
+
         }
         std::cout << enemies.size() << "\n";
 
         window.clear();
         window.draw(shape);
 
+        for (int i = 0; i < objects.size(); i++)objects[i]->render(&window);
 
+        /*
         player.render(&window);
 
         for (int i = 0; i < enemies.size(); i++)enemies[i].render(&window);
-
+        */
         window.display();
     }
 
