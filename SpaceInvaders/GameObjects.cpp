@@ -3,10 +3,14 @@
 #include <SFML/System/Clock.hpp>
 #include <vector>
 #include <iostream>
+#include "GameCore.cpp"
 
 class Object {
 public:
+    std::vector<Object*>* objects;
+
     unsigned int ID;
+    unsigned int* nextAvaiableID;
     sf::Vector2f position;
     bool hidden;
     bool collision;
@@ -18,8 +22,10 @@ public:
     //sf::Image image;
     sf::Sprite sprite;
 
-    void assignID(unsigned int id) {
-        ID = id;
+    void assignID() {
+        ID = *nextAvaiableID;
+        *nextAvaiableID++;
+
     }
 
     void setTexture(sf::Texture* playerTexture) {
@@ -82,15 +88,31 @@ public:
     }
 };
 
-class Player : public Object {
+class Person : public Object {
+public:
+    std::vector<Projectile> bullets;
+    sf::Image projectileImage;
+    sf::Texture projectileTexture;
+
+    void refreshRenderQueue() {
+        //new fullets pointers after shot
+    }
+};
+
+class Player : public Person {
 private:
     float movementSpeed = 100.f;
 
 public:
-    Player() {
+    //std::vector<Projectile> bullets;
+
+    Player(unsigned int* nxtAvlblID) {
+        nextAvaiableID = nxtAvlblID;
         hidden = false;
         collision = true;
         controllable = true;
+        //projectileImage.loadFromFile("./assets/sprites/bullet.png");
+        //projectileTexture.loadFromImage(projectileImage);
     }
 
     void controll(float delta) {
@@ -100,13 +122,14 @@ public:
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             move(sf::Vector2f(1 * movementSpeed * delta, 0));
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            bullets.emplace_back(position, sf::Vector2i(0, -1), projectileImage);
+            assignID();
+        }
     }
-
-    void shoot();
-
 };
 
-class Enemy : public Object {
+class Enemy : public Person {
 public:
     Enemy() {
         hidden = false;

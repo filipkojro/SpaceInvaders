@@ -3,22 +3,18 @@
 #include <SFML/System/Clock.hpp>
 #include <vector>
 #include <iostream>
-#include "GameObjects.cpp"
+//#include "GameObjects.cpp"
 
 class GameSystem {
 public:
-	std::vector<Object*>objects;
+	//std::vector<Object*>objects;
+	std::vector<sf::Sprite*> allSprites;
 
 	unsigned int nextAvaiableID = 0;
 
-	void setID(Object* object) {
-		object->assignID(nextAvaiableID);
-		nextAvaiableID++;
-	}
-
 	void renderAll(sf::RenderWindow* window) {
-		for (int i = 0; i < objects.size(); i++) {
-			objects[i]->render(window);
+		for (int i = 0; i < allSprites.size(); i++) {
+			window->draw(*allSprites[i]);
 		}
 	}
 };

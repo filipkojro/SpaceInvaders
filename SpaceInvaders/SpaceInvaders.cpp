@@ -33,11 +33,12 @@ int main(){
     //std::vector<Object*>objects;
 
 
-    Player player;
-    gameSystem.objects.push_back(&player);
+    Player player(&gameSystem.nextAvaiableID);
+    //gameSystem.objects.push_back(&player);
     player.autoCollision(playerImage);
 
     player.setTexture(&playerTexture);
+    gameSystem.allSprites.push_back(&player.sprite);
     player.move(sf::Vector2f(16, 15 * 16));
     //player.position = ;
 
@@ -50,8 +51,11 @@ int main(){
         int y = i / sizeX;
         enemy.setTexture(&enemyTexture);
         enemy.autoCollision(enemyImage);
+
+        gameSystem.allSprites.push_back(&enemy.sprite);
+
         enemy.move(sf::Vector2f(32 * x - 16, 32 * y - 16));
-        gameSystem.objects.push_back(&enemy);
+        //gameSystem.objects.push_back(&enemy);
             // enemies[enemies.size() - 1].setTexture(&enemyTexture);
             // enemies[enemies.size() - 1].autoCollision(enemyImage);
             // enemies[enemies.size() - 1].move(sf::Vector2f(32 * x - 16, 32 * y - 16)); 
@@ -96,7 +100,7 @@ int main(){
 
         
         for (int i = 0; i < enemies.size(); i++) {
-            if (enemies[i].checkCollision(mouse, tColBox)) enemies.erase(enemies.begin() + i);
+            if (enemies[i].checkCollision(mouse, tColBox)) enemies[i].hidden = true; //enemies.erase(enemies.begin() + i);
 
             //to do delete from objects
 
