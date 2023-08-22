@@ -5,6 +5,7 @@
 #include <iostream>
 #include "GameCore.cpp"
 #include "GameObjects.cpp"
+#include "GameSides.cpp"
 
 int main(){
     GameSystem gameSystem;
@@ -24,21 +25,18 @@ int main(){
     sf::Texture enemyTexture;
     enemyTexture.loadFromImage(enemyImage);
 
-    sf::Image bulletImage;
-    bulletImage.loadFromFile("./assets/sprites/bullet.png");
-    sf::Texture bulletTexture;
-    bulletTexture.loadFromImage(bulletImage);
+    
 
 
     //std::vector<Object*>objects;
 
 
-    Player player(&gameSystem.nextAvaiableID);
-    //gameSystem.objects.push_back(&player);
+    Player player(&gameSystem);
+    gameSystem.objects.push_back(&player);
     player.autoCollision(playerImage);
 
     player.setTexture(&playerTexture);
-    gameSystem.allSprites.push_back(&player.sprite);
+    //gameSystem.allSprites.push_back(&player.sprite);
     player.move(sf::Vector2f(16, 15 * 16));
     //player.position = ;
 
@@ -52,10 +50,10 @@ int main(){
         enemy.setTexture(&enemyTexture);
         enemy.autoCollision(enemyImage);
 
-        gameSystem.allSprites.push_back(&enemy.sprite);
+        //gameSystem.allSprites.push_back(&enemy.sprite);
 
         enemy.move(sf::Vector2f(32 * x - 16, 32 * y - 16));
-        //gameSystem.objects.push_back(&enemy);
+        gameSystem.objects.push_back(&enemy);
             // enemies[enemies.size() - 1].setTexture(&enemyTexture);
             // enemies[enemies.size() - 1].autoCollision(enemyImage);
             // enemies[enemies.size() - 1].move(sf::Vector2f(32 * x - 16, 32 * y - 16)); 
@@ -66,12 +64,6 @@ int main(){
         }
     }
 
-
-
-    std::vector<Projectile>projectiles;
-
-
-    //Projectile bullet;
 
     int tColBox[4] = { 0, 0, 0, 0 };
     
@@ -89,6 +81,7 @@ int main(){
         if (delta.asMilliseconds() > 0) {
             clock.restart();
             player.controll(delta.asMilliseconds() / 1000.f);
+            player.bullet.movement(delta.asMilliseconds() / 1000.f);
 
             //std::cout << delta.asMilliseconds() / 1000.f << " " << player.position.x << "\n";
         }
@@ -105,7 +98,7 @@ int main(){
             //to do delete from objects
 
         }
-        std::cout << enemies.size() << "\n";
+        //std::cout << enemies.size() << "\n";
 
         window.clear();
         window.draw(shape);

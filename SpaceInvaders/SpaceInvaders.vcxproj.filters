@@ -24,5 +24,8 @@
     <ClCompile Include="GameCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameSides.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

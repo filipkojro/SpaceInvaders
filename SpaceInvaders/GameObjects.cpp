@@ -3,11 +3,11 @@
 #include <SFML/System/Clock.hpp>
 #include <vector>
 #include <iostream>
-#include "GameCore.cpp"
+//#include "GameCore.cpp"
 
 class Object {
 public:
-    std::vector<Object*>* objects;
+    //std::vector<Object*>* objects;
 
     unsigned int ID;
     unsigned int* nextAvaiableID;
@@ -63,6 +63,11 @@ public:
         position = sprite.getPosition();
     }
 
+    void setPosition(sf::Vector2f objPosition) {
+        sprite.setPosition(objPosition);
+        position = sprite.getPosition();
+    }
+
     bool checkCollision(sf::Vector2f projectilePosition, int* projectileCollisionBox) {
         if (position.x + collisionBox[0] <= projectilePosition.x + projectileCollisionBox[0] + projectileCollisionBox[2] &&
             position.y + collisionBox[1] <= projectilePosition.y + projectileCollisionBox[1] + projectileCollisionBox[3] &&
@@ -75,65 +80,3 @@ public:
 
 };
 
-class Projectile : Object {
-public:
-    Projectile(sf::Vector2f startPosition, sf::Vector2i direction, sf::Image image) {
-        hidden = false;
-        collision = true;
-        controllable = false;
-
-        autoCollision(image);
-
-        position = startPosition;
-    }
-};
-
-class Person : public Object {
-public:
-    std::vector<Projectile> bullets;
-    sf::Image projectileImage;
-    sf::Texture projectileTexture;
-
-    void refreshRenderQueue() {
-        //new fullets pointers after shot
-    }
-};
-
-class Player : public Person {
-private:
-    float movementSpeed = 100.f;
-
-public:
-    //std::vector<Projectile> bullets;
-
-    Player(unsigned int* nxtAvlblID) {
-        nextAvaiableID = nxtAvlblID;
-        hidden = false;
-        collision = true;
-        controllable = true;
-        //projectileImage.loadFromFile("./assets/sprites/bullet.png");
-        //projectileTexture.loadFromImage(projectileImage);
-    }
-
-    void controll(float delta) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            move(sf::Vector2f(-1 * movementSpeed * delta, 0));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            move(sf::Vector2f(1 * movementSpeed * delta, 0));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-            bullets.emplace_back(position, sf::Vector2i(0, -1), projectileImage);
-            assignID();
-        }
-    }
-};
-
-class Enemy : public Person {
-public:
-    Enemy() {
-        hidden = false;
-        collision = true;
-        controllable = false;
-    }
-};
