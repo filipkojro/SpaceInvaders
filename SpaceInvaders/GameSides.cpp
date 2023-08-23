@@ -92,7 +92,7 @@ public:
             if (bullet.position.y < -100) {
                 bullet.deploy(position);
             }
-            //bullet.deploy(position);
+            bullet.deploy(position);
         }
     }
 };
